@@ -15,11 +15,3 @@ classifications <- readRDS("exdata_data_NEI_data/Source_Classification_Code.rds"
 
 ##########
 
-
-
-# Set up output device and plot
-#png("plots/plot1.png",600,600)
-
-
-
-#dev.off()
