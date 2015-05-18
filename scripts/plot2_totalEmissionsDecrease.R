@@ -1,4 +1,7 @@
-## plot1.R
+## plot2.R
+## Have total emissions from PM2.5 decreased in the Baltimore City, 
+##  Maryland (fips == "24510") from 1999 to 2008?
+
 ## Analysis script for the second project of Coursera Data Science Series, 
 ## Course 4: Exploratory Data Analysis (exdata-014)
 ## Timothy Johnstone, May 2015
@@ -24,17 +27,17 @@ totalEmissions_Baltimore <- aggregate(Emissions ~ year, nei_Baltimore,sum)
 # Set up output device and plot
 png("plots/plot2.png",600,600)
 
-plot(
-  totalEmissions_Baltimore$year, totalEmissions_Baltimore$Emissions/1000, type='l',
-  main="Total PM2.5 emissions in Baltimore MD (24510) by year",
-  xlab="Year",
-  ylim=c(0,4), ylab="PM2.5 Emissions (thousands of tons)", 
-)
-
-points(totalEmissions_Baltimore$year, totalEmissions_Baltimore$Emissions/1000,pch=19)
-
-#add lines indicating the starting and ending value
-abline(h=totalEmissions_Baltimore$Emissions[1]/1000, lty=2, col='red')
-abline(h=totalEmissions_Baltimore$Emissions[4]/1000, lty=2, col='green')
+  plot(
+    totalEmissions_Baltimore$year, totalEmissions_Baltimore$Emissions/1000, type='l',
+    main="Total PM2.5 emissions in Baltimore MD (24510) by year",
+    xlab="Year",
+    ylim=c(0,4), ylab="PM2.5 Emissions (kilotons)", 
+  )
+  
+  points(totalEmissions_Baltimore$year, totalEmissions_Baltimore$Emissions/1000,pch=19)
+  
+  # Add lines indicating the starting and ending value
+  abline(h=totalEmissions_Baltimore$Emissions[1]/1000, lty=2, col='red')
+  abline(h=totalEmissions_Baltimore$Emissions[4]/1000, lty=2, col='green')
 
 dev.off()

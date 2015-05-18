@@ -1,4 +1,8 @@
-## plot1.R
+## plot3.R
+## Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) variable: 
+##  Which of these four sources have seen decreases in emissions from 1999-2008 for Baltimore City? 
+##  Which have seen increases in emissions from 1999-2008?
+
 ## Analysis script for the second project of Coursera Data Science Series, 
 ## Course 4: Exploratory Data Analysis (exdata-014)
 ## Timothy Johnstone, May 2015
@@ -9,6 +13,7 @@ setwd("Z:/Lotus/Dropbox/Coursera/4_Exploratory_Data_Analysis/Projects/ExData_Plo
 
 # You must have the ggplot2 library installed to run this script
 library(ggplot2)
+
 ##########
 
 # Load in dataset files
@@ -29,13 +34,13 @@ lastPerType <- data.frame(z=totalEmissions_Baltimore$Emissions[13:16],type=total
 
 # Create output device and plot
 png("plots/plot3.png",600,600)
-ggp <- ggplot(totalEmissions_Baltimore, aes(year,Emissions,fill=type)) +
-  geom_line() + geom_point() + 
-  geom_hline(data=firstPerType, aes(yintercept = z), lty=2, col='green') +
-  geom_hline(data=lastPerType, aes(yintercept = z),lty=2, col='red') +
-  theme_bw() + guides(fill=FALSE)+
-  facet_grid(.~type,scales = "free",space="free") + 
-  labs(title=expression("PM"[2.5]*" dmissions in Baltimore MD (24510) for each source type by year")) +
-  labs(x="year", y=expression("Total PM"[2.5]*" Emission (tons)"))
-print(ggp)
+  ggp <- ggplot(totalEmissions_Baltimore, aes(year,Emissions,fill=type)) +
+    geom_line() + geom_point() + 
+    geom_hline(data=firstPerType, aes(yintercept = z), lty=2, col='red') +
+    geom_hline(data=lastPerType, aes(yintercept = z),lty=2, col='green') +
+    theme_bw() + guides(fill=FALSE)+
+    facet_grid(.~type,scales = "free",space="free") + 
+    labs(title=expression("PM"[2.5]*" emissions in Baltimore MD (24510) for each source type by year")) +
+    labs(x="year", y=expression("Total PM"[2.5]*" emissions (tons)"))
+  print(ggp)
 dev.off()

@@ -1,4 +1,6 @@
 ## plot1.R
+## Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?
+
 ## Analysis script for the second project of Coursera Data Science Series, 
 ## Course 4: Exploratory Data Analysis (exdata-014)
 ## Timothy Johnstone, May 2015
@@ -25,7 +27,7 @@ plot(
   totalEmissions$year, totalEmissions$Emissions/1000000, type='l',
   main="Total PM2.5 emissions from US sources by year",
   xlab="Year",
-  ylim=c(0,8), ylab="PM2.5 Emissions (millions of tons)", 
+  ylim=c(0,8), ylab="PM2.5 emissions (megatons)", 
 )
 
 points(totalEmissions$year, totalEmissions$Emissions/1000000,pch=19)
