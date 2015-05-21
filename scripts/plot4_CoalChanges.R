@@ -18,7 +18,6 @@ scc <- readRDS("exdata_data_NEI_data/Source_Classification_Code.rds")
 ##########
 
 # Take only the subset of data related to coal combustion
-# Find coal and combustion related scc codes
 comb <- grepl("comb", scc$SCC.Level.One, ignore.case=TRUE)
 coal <- grepl("coal", scc$SCC.Level.Four, ignore.case=TRUE) 
 scc_coalCombustion <- scc[(comb & coal),]$SCC
@@ -28,6 +27,12 @@ nei_coalCombustion <- nei[nei$SCC %in% scc_coalCombustion,]
 # Calculate total per year
 nei_coalCombustion <- aggregate(Emissions ~ year, nei_coalCombustion,sum)
 
+# Calculate starting and ending values to easily display change over time
+denom <- 1000000
+startVal <- nei_coalCombustion$Emissions[1]/denom
+endVal <- nei_coalCombustion$Emissions[4]/denom
+midPoint <- (nei_coalCombustion$year[4]+nei_coalCombustion$year[1])/2
+
 
 ##########
 
@@ -35,15 +40,15 @@ nei_coalCombustion <- aggregate(Emissions ~ year, nei_coalCombustion,sum)
 png("plots/plot4.png",600,600)
 
   plot(
-    nei_coalCombustion$year, nei_coalCombustion$Emissions/1000000, type='l',
+    nei_coalCombustion$year, nei_coalCombustion$Emissions/denom, type='l',
     main="Total PM2.5 emissions from coal combustion sources, by year",
     xlab="Year",
     ylim=c(0,0.6), ylab="PM2.5 Emissions (megatons)", 
   )
-  points(nei_coalCombustion$year, nei_coalCombustion$Emissions/1000000,pch=19)
-  
+  points(nei_coalCombustion$year, nei_coalCombustion$Emissions/denom,pch=19)
+  # Add arrow indicating total movement from start to end
+  arrows(midPoint,startVal,y1=endVal,lwd=3, col='gray85', lty=6)
   # Add lines indicating the starting and ending value
-  abline(h=nei_coalCombustion$Emissions[1]/1000000, lty=2, col='red')
-  abline(h=nei_coalCombustion$Emissions[4]/1000000, lty=2, col='green')
+  abline(h=c(startVal, endVal), lty=2, col=c('red','green'))
 
 dev.off()

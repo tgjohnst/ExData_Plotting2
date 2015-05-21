@@ -20,20 +20,27 @@ scc <- readRDS("exdata_data_NEI_data/Source_Classification_Code.rds")
 # Calculate total emissions for each year
 totalEmissions <- aggregate(Emissions ~ year, nei, sum)
 
+# Calculate starting and ending values to easily display change over time
+denom <- 1000000
+startVal <- totalEmissions$Emissions[1]/denom
+endVal <- totalEmissions$Emissions[4]/denom
+midPoint <- (totalEmissions$year[4]+totalEmissions$year[1])/2
+
+##########
+
 # Set up output device and plot
 png("plots/plot1.png",600,600)
 
-plot(
-  totalEmissions$year, totalEmissions$Emissions/1000000, type='l',
-  main="Total PM2.5 emissions from US sources by year",
-  xlab="Year",
-  ylim=c(0,8), ylab="PM2.5 emissions (megatons)", 
-)
-
-points(totalEmissions$year, totalEmissions$Emissions/1000000,pch=19)
-
-#add lines indicating the starting and ending value
-abline(h=totalEmissions$Emissions[1]/1000000, lty=2, col='red')
-abline(h=totalEmissions$Emissions[4]/1000000, lty=2, col='green')
+  plot(
+    totalEmissions$year, totalEmissions$Emissions/denom, type='l',
+    main="Total PM2.5 emissions from US sources by year",
+    xlab="Year",
+    ylim=c(0,8), ylab="PM2.5 emissions (megatons)", 
+  )
+  points(totalEmissions$year, totalEmissions$Emissions/denom,pch=19)
+  # Add arrow indicating total movement from start to end
+  arrows(midPoint,startVal,y1=endVal,lwd=3, col='gray85', lty=6)
+  # Add lines indicating the starting and ending value
+  abline(h=c(startVal, endVal), lty=2, col=c('red','green'))
 
 dev.off()

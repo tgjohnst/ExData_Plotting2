@@ -25,6 +25,11 @@ nei_vehicles <- nei[(nei$SCC %in% scc_vehicles) & (nei$fips == 24510),]
 # Calculate total per year
 nei_vehiclesTotal <- aggregate(Emissions ~ year, nei_vehicles,sum)
 
+# Calculate starting and ending values to easily display change over time
+denom <- 1000
+startVal <- nei_vehiclesTotal$Emissions[1]/denom
+endVal <- nei_vehiclesTotal$Emissions[4]/denom
+midPoint <- (nei_vehiclesTotal$year[4]+nei_vehiclesTotal$year[1])/2
 
 ##########
 
@@ -32,15 +37,15 @@ nei_vehiclesTotal <- aggregate(Emissions ~ year, nei_vehicles,sum)
 png("plots/plot5.png",600,600)
 
   plot(
-    nei_vehiclesTotal$year, nei_vehiclesTotal$Emissions/1000, type='l',
+    nei_vehiclesTotal$year, nei_vehiclesTotal$Emissions/denom, type='l',
     main="Total PM2.5 emissions from Baltimore MD motor vehicles, by year",
     xlab="Year",
     ylim=c(0,0.6), ylab="PM2.5 Emissions (kilotons)", 
   )
-  points(nei_vehiclesTotal$year, nei_vehiclesTotal$Emissions/1000,pch=19)
-  
+  points(nei_vehiclesTotal$year, nei_vehiclesTotal$Emissions/denom,pch=19)
+  # Add arrow indicating total movement from start to end
+  arrows(midPoint,startVal,y1=endVal,lwd=3, col='gray85', lty=6)
   # Add lines indicating the starting and ending value
-  abline(h=nei_vehiclesTotal$Emissions[1]/1000, lty=2, col='red')
-  abline(h=nei_vehiclesTotal$Emissions[4]/1000, lty=2, col='green')
+  abline(h=c(startVal,endVal), lty=2, col=c('red','green'))
 
 dev.off()

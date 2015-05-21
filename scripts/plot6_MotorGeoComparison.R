@@ -18,17 +18,7 @@ scc <- readRDS("exdata_data_NEI_data/Source_Classification_Code.rds")
 
 ##########
 
-# Take only the subset of data related to motor vehicles in Baltimore & LA
-vehicles <- grepl("vehicle", scc$SCC.Level.Two, ignore.case=TRUE)
-scc_vehicles <- scc[vehicles,]$SCC
-nei_la_vehicles <- nei[(nei$SCC %in% scc_vehicles) & (nei$fips == '06037'),]
-nei_balt_vehicles <- nei[(nei$SCC %in% scc_vehicles) & (nei$fips == '24510'),]
-
-# Calculate total per year
-nei_la_vehiclesTotal <- aggregate(Emissions ~ year, nei_la_vehicles,sum)
-nei_balt_vehiclesTotal <- aggregate(Emissions ~ year, nei_balt_vehicles,sum)
-
-# Take only the subset of data related to motor vehicles in Baltimore & LA
+# Take only the subset of data related to motor vehicles
 vehicles <- grepl("vehicle", scc$SCC.Level.Two, ignore.case=TRUE)
 scc_vehicles <- scc[vehicles,]$SCC
 nei_vehicles <- nei[(nei$SCC %in% scc_vehicles),]
@@ -38,28 +28,37 @@ nei_vehiclesTotal <- aggregate(Emissions ~ fips+year, nei_vehicles,sum)
 
 ##########
 
-# Function to plot any given city/fips to avoid repeating code later
-plotCity <- function(city,fips) {
+# Created function to plot any given city/fips to avoid repeating code later
+plotCity <- function(city,fips,color="black", denom=1000) {
+  # Subset to just this city
   nei_city <- nei_vehiclesTotal[nei_vehiclesTotal$fips==fips,]
-  plot(
-    nei_city$year, nei_city$Emissions/1000, type='l',
-    main=paste0("Total PM2.5 emissions from vehicles in ", city, ", by year"), cex.main=0.6,
-    xlab="Year",
-    ylab="PM2.5 Emissions (kilotons)", ylim=c(0,8) 
-  )
-  points(nei_city$year, nei_city$Emissions/1000,pch=19)
-  
+  # Calculate starting and ending values to easily display change over time
+  startVal <- nei_city$Emissions[1]/denom
+  endVal <- nei_city$Emissions[4]/denom
+  midPoint <- (nei_city$year[4]+nei_city$year[1])/2
+  # Plot the data!
+  lines(nei_city$year, nei_city$Emissions/denom, col=color)
+  points(nei_city$year, nei_city$Emissions/denom,pch=19, col=color)
+  # Add arrow indicating total movement from start to end
+  arrows(midPoint,startVal,y1=endVal,lwd=3, col='gray85', lty=6,length=0.1)
   # Add lines indicating the starting and ending value
-  abline(h=nei_city$Emissions[1]/1000, lty=2, col='red')
-  abline(h=nei_city$Emissions[4]/1000, lty=2, col='green')
+  abline(h=c(startVal, endVal), lty=2, col=c('red','green'))
 }
 
 ##########
 
 # Set up output device and plot 2 panels
 png("plots/plot6.png",600,600)
-par(mfrow=c(1,2))
-  plotCity('Baltimore','24510')
-  plotCity('LA','06037')
+  plot(
+    c(1999,2002,2005,2008),rep(1,4), type='n',
+    main=paste0("Total PM2.5 emissions from vehicles in multiple cities, by year"),
+    xlab="Year",
+    ylab="PM2.5 Emissions (kilotons)", ylim=c(0,7.2)
+  )
+  # Plot city data
+  plotCity('LA','06037',"chocolate1")
+  plotCity('Baltimore','24510',"slateblue1" )
+  # Draw legend
+  legend('center', legend=c("LA","Baltimore"), fill=c("chocolate1","slateblue1"))
 
 dev.off()
